@@ -44,11 +44,13 @@ public interface AndroidDevice {
   public void clearUserData(AndroidApp app) throws AndroidSdkException;
 
   public void startSelendroid(AndroidApp aut, int port, SelendroidCapabilities capabilities,
-                              String hostname) throws AndroidSdkException;
+                              String hostname, Integer ipv6Port) throws AndroidSdkException;
 
   public boolean isSelendroidRunning();
 
   public int getSelendroidsPort();
+
+  public int getSelendroidsRemotePort();
 
   public void kill(AndroidApp aut) throws AndroidDeviceException, AndroidSdkException;
 

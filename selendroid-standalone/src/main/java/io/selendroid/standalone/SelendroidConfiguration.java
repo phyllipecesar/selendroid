@@ -146,9 +146,16 @@ public class SelendroidConfiguration {
   @Parameter(names = "-hostname", description = "The hostname that we should start the selendroid server")
   private String hostname = "localhost";
 
+  @Parameter(description = "The IPv6 port the selendroid-standalone is using to communicate with instrumentation server",
+          names = "-selendroidIPv6Port")
+  private Integer selendroidIPv6Port = null;
+
   public void setKeystore(String keystore) {
     this.keystore = keystore;
   }
+
+  public Integer getSelendroidIPv6Port() { return selendroidIPv6Port; }
+  public void setSelendroidIPv6Port(Integer iPv6Port) { selendroidIPv6Port = iPv6Port; }
 
   public String getKeystore() {
     return keystore;

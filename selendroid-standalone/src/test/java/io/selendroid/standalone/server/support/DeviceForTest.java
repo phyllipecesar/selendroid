@@ -84,7 +84,7 @@ public class DeviceForTest extends DefaultAndroidEmulator {
     }
   }
 
-  public void startSelendroid(AndroidApp aut, int port, SelendroidCapabilities caps, String hostname) throws AndroidSdkException {
+  public void startSelendroid(AndroidApp aut, int port, SelendroidCapabilities caps, String hostname, Integer ipv6Port) throws AndroidSdkException {
     try {
       selendroidDeviceServerStub = new SelendroidDeviceServerStub(port, testSessionListener);
     } catch (IOException e) {
@@ -117,6 +117,11 @@ public class DeviceForTest extends DefaultAndroidEmulator {
       return selendroidDeviceServerStub.getPort();
     }
     return 0;
+  }
+
+  @Override
+  public int getSelendroidsRemotePort() {
+    return getSelendroidsPort();
   }
 
   @Override

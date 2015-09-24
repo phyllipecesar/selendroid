@@ -61,6 +61,7 @@ public class SelendroidStandaloneDriver implements ServerDetails {
   public static final String APP_BASE_PACKAGE = "basePackage";
   public static final String APP_ID = "appId";
   private static int selendroidServerPort = 38080;
+  private static Integer selendroidServerIPv6Port = null;
   private static final Logger log = Logger.getLogger(SelendroidStandaloneDriver.class.getName());
   private InitAndroidDevicesStrategy initAndroidDevicesStrategy;
   private Map<String, AndroidApp> appsStore = new HashMap<String, AndroidApp>();
@@ -85,6 +86,7 @@ public class SelendroidStandaloneDriver implements ServerDetails {
     androidDriverAPKBuilder = new AndroidDriverAPKBuilder();
 
     selendroidServerPort = serverConfiguration.getSelendroidServerPort();
+    selendroidServerIPv6Port = serverConfiguration.getSelendroidIPv6Port();
 
     if (serverConfiguration.getAppFolderToMonitor() != null) {
       startFolderMonitor();
@@ -245,6 +247,7 @@ public class SelendroidStandaloneDriver implements ServerDetails {
         }
 
         int port = getNextSelendroidServerPort();
+        Integer ipv6Port = getNextSelendroidIPv6ServerPort();
         String hostname = getSelendroidConfiguration().getHostname();
 
         boolean serverInstalled = device.isInstalled("io.selendroid." + app.getBasePackage());
@@ -273,7 +276,7 @@ public class SelendroidStandaloneDriver implements ServerDetails {
         // It's GO TIME!
         // start the selendroid server on the device and make sure it's up
         eventListener.onBeforeDeviceServerStart();
-        device.startSelendroid(app, port, desiredCapabilities, hostname);
+        device.startSelendroid(app, port, desiredCapabilities, hostname, ipv6Port);
         waitForServerStart(device);
         eventListener.onAfterDeviceServerStart();
 
@@ -285,14 +288,14 @@ public class SelendroidStandaloneDriver implements ServerDetails {
         } catch (InterruptedException e1) {
           Thread.currentThread().interrupt();
         }
-
+        int remotePort = ipv6Port != null ? ipv6Port : port;
         RemoteWebDriver driver =
-          new RemoteWebDriver(new URL("http://" + hostname + ":" + port + "/wd/hub"), desiredCapabilities);
+          new RemoteWebDriver(new URL("http://" + hostname + ":" + remotePort + "/wd/hub"), desiredCapabilities);
         String sessionId = driver.getSessionId().toString();
         SelendroidCapabilities requiredCapabilities =
           new SelendroidCapabilities(driver.getCapabilities().asMap());
         ActiveSession session =
-          new ActiveSession(sessionId, requiredCapabilities, app, device, port, this, hostname);
+          new ActiveSession(sessionId, requiredCapabilities, app, device, port, this, hostname, ipv6Port);
 
         this.sessions.put(sessionId, session);
 
@@ -489,6 +492,13 @@ public class SelendroidStandaloneDriver implements ServerDetails {
 
   private synchronized int getNextSelendroidServerPort() {
     return selendroidServerPort++;
+  }
+
+  private synchronized Integer getNextSelendroidIPv6ServerPort() {
+    if (selendroidServerIPv6Port == null) {
+      return null;
+    }
+    return selendroidServerIPv6Port++;
   }
 
   /**

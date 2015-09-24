@@ -20,8 +20,6 @@ import io.selendroid.common.SelendroidCapabilities;
 import io.selendroid.standalone.android.AndroidApp;
 import io.selendroid.standalone.android.AndroidDevice;
 import io.selendroid.standalone.android.AndroidSdk;
-import io.selendroid.standalone.android.impl.DefaultAndroidApp;
-import io.selendroid.standalone.android.impl.DefaultHardwareDevice;
 import io.selendroid.standalone.io.ShellCommand;
 import io.selendroid.standalone.server.util.HttpClientUtil;
 import io.selendroid.standalone.util.SelendroidAssert;
@@ -77,7 +75,7 @@ public class DefaultHardwareDeviceTests {
     Assert.assertTrue(installedAPKs.contains(AUT_PACKAGE));
 
     // start selendroid
-    emulator.startSelendroid(aut, port, new SelendroidCapabilities(), "localhost");
+    emulator.startSelendroid(aut, port, new SelendroidCapabilities(), "localhost", null);
     String url = "http://localhost:" + port + "/wd/hub/status";
     HttpResponse response = HttpClientUtil.executeRequest(url, HttpMethod.GET);
     SelendroidAssert.assertResponseIsOk(response);

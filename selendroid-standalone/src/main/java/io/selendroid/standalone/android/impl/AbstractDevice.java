@@ -30,7 +30,6 @@ import io.selendroid.standalone.exceptions.AndroidDeviceException;
 import io.selendroid.standalone.exceptions.AndroidSdkException;
 import io.selendroid.standalone.exceptions.ShellCommandException;
 import io.selendroid.standalone.io.ShellCommand;
-import io.selendroid.standalone.server.model.SelendroidStandaloneDriver;
 import org.apache.commons.exec.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
@@ -57,6 +56,7 @@ public abstract class AbstractDevice implements AndroidDevice {
   protected String model = null;
   protected String apiTargetType = "android";
   protected Integer port = null;
+  protected Integer ipv6Port = null;
   protected IDevice device;
   private ByteArrayOutputStream logoutput;
   private ExecuteWatchdog logcatWatchdog;
@@ -227,9 +227,10 @@ public abstract class AbstractDevice implements AndroidDevice {
 
   @Override
   public void startSelendroid(AndroidApp aut, int port, SelendroidCapabilities capabilities,
-                              String hostname) throws AndroidSdkException {
+                              String hostname, Integer ipv6Port) throws AndroidSdkException {
     this.port = port;
     this.hostname = hostname;
+    this.ipv6Port = ipv6Port;
 
     List<String> argList = Lists.newArrayList(
         "-e", "main_activity", aut.getMainActivity(),
@@ -301,7 +302,7 @@ public abstract class AbstractDevice implements AndroidDevice {
   @Override
   public boolean isSelendroidRunning() {
     HttpClient httpClient = HttpClientBuilder.create().build();
-    String url = "http://" + getHostname() + ":" + getSelendroidsPort() + "/wd/hub/status";
+    String url = "http://" + getHostname() + ":" + getSelendroidsRemotePort() + "/wd/hub/status";
     log.info("Checking if the Selendroid server is running: " + url);
     HttpRequestBase request = new HttpGet(url);
     HttpResponse response;
@@ -330,6 +331,11 @@ public abstract class AbstractDevice implements AndroidDevice {
   @Override
   public int getSelendroidsPort() {
     return port;
+  }
+
+  @Override
+  public int getSelendroidsRemotePort() {
+    return ipv6Port != null ? ipv6Port : port;
   }
 
   @Override

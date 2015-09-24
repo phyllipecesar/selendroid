@@ -28,15 +28,18 @@ public class ActiveSession {
   private boolean invalid = false;
   private final Timer stopSessionTimer = new Timer(true);
   private String hostname;
+  private Integer ipv6Port;
 
   ActiveSession(String sessionId, SelendroidCapabilities desiredCapabilities, AndroidApp aut,
-                AndroidDevice device, int selendroidPort, SelendroidStandaloneDriver driver, String hostname) {
+                AndroidDevice device, int selendroidPort, SelendroidStandaloneDriver driver, String hostname,
+                Integer ipv6Port) {
     this.selendroidServerPort = selendroidPort;
     this.sessionId = sessionId;
     this.aut = aut;
     this.device = device;
     this.desiredCapabilities = desiredCapabilities;
     this.hostname = hostname;
+    this.ipv6Port = ipv6Port;
     stopSessionTimer.schedule(new SessionTimeoutTask(driver, sessionId), driver
         .getSelendroidConfiguration().getSessionTimeoutMillis());
   }
@@ -60,7 +63,7 @@ public class ActiveSession {
   public String getHostname() { return hostname; }
 
   public int getSelendroidServerPort() {
-    return selendroidServerPort;
+    return ipv6Port != null ? ipv6Port.intValue() : selendroidServerPort;
   }
 
   public SelendroidCapabilities getDesiredCapabilities() {
