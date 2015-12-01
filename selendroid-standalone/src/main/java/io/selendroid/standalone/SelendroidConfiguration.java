@@ -29,6 +29,9 @@ public class SelendroidConfiguration {
   @Parameter(description = "port the server will listen on.", names = "-port")
   private int port = 4444;
 
+  @Parameter(description = "if port the server will listen on should be random.", names = "-random-port")
+  private boolean randomPort = false;
+
   @Parameter(description = "timeout that will be used to start Android emulators",
              names = "-timeoutEmulatorStart")
   private long timeoutEmulatorStart = 300000;
@@ -222,6 +225,15 @@ public class SelendroidConfiguration {
 
   public int getPort() {
     return this.port;
+  }
+
+
+  public void setRandomPort(boolean randomPort) {
+    this.randomPort= randomPort;
+  }
+
+  public boolean isRandomPort() {
+    return this.randomPort;
   }
 
   public void setEmulatorPort(int port) {

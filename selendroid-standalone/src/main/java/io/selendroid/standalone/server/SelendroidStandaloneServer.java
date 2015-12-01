@@ -48,7 +48,11 @@ public class SelendroidStandaloneServer {
   public SelendroidStandaloneServer(SelendroidConfiguration config)
       throws AndroidSdkException, AndroidDeviceException {
     this.config = config;
-    webServer = new HttpServer(config.getPort());
+    if (config.isRandomPort()) {
+      webServer = HttpServer.httpServerOnRandomPort();
+    } else {
+      webServer = new HttpServer(config.getPort());
+    }
     driver = initializeSelendroidServer();
     init();
   }
@@ -65,7 +69,12 @@ public class SelendroidStandaloneServer {
 
   public void start() {
     webServer.start();
-
+    if (config.isRandomPort()) {
+      log.info("Server should be started on a random port, will wait for the port");
+      webServer.waitForRandomPort();
+      log.info("Port now will be " + webServer.getPort());
+      config.setPort(webServer.getPort());
+    }
     if (config.isGrid()) {
       selfRegisterInGrid();
     }

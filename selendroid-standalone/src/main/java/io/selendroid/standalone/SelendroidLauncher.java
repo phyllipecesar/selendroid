@@ -61,7 +61,11 @@ public class SelendroidLauncher {
    */
   private void launchServer() {
     try {
-      log.info("Starting Selendroid standalone on port " + config.getPort());
+      if (config.isRandomPort()) {
+        log.info("Starting Selendroid standalone on random port");
+      } else {
+        log.info("Starting Selendroid standalone on port " + config.getPort());
+      }
       server = new SelendroidStandaloneServer(config);
       server.start();
     } catch (AndroidSdkException e) {
